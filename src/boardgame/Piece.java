@@ -9,4 +9,8 @@ public class Piece {
         position = null;
         this.board = board;
     }
+
+    public Board getBoard() {
+        return board;
+    }
 }

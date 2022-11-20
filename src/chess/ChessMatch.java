@@ -1,6 +1,9 @@
 package chess;
 
 import boardgame.Board;
+import boardgame.Position;
+import chess.enums.Color;
+import chess.pieces.*;
 
 public class ChessMatch {
     
@@ -8,6 +11,11 @@ public class ChessMatch {
 
     public ChessMatch() {
         board = new Board(8, 8);
+        initialSetup();
+    }
+
+    private void initialSetup() {
+        board.placePiece(new Rook(board, Color.WHITE), new Position(7, 0));
     }
 
     public ChessPiece[][] getPieces() {
