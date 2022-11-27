@@ -49,10 +49,20 @@ public class Board {
 
     public void placePiece(Piece piece, Position position) {
         if (thereIsAPiece(position)) {
-            throw new BoardException("There is already a piece at this position -> " + position);
+            throw new BoardException("There is already a piece on this position -> " + position);
         }
         piece.position = position;
         pieces[position.getRow()][position.getColumn()] = piece;
+    }
+
+    public Piece removePiece(Position position) {
+        if (!thereIsAPiece(position)) {
+            return null;
+        }
+        Piece pieceRemoved = piece(position);
+        pieceRemoved.position = null;
+        pieces[position.getRow()][position.getColumn()] = null;
+        return pieceRemoved;
     }
 
     public boolean thereIsAPiece(Position position) {

@@ -1,7 +1,10 @@
 package chess;
 
 import boardgame.Board;
+import boardgame.Piece;
+import boardgame.Position;
 import chess.enums.Color;
+import chess.exceptions.ChessException;
 import chess.pieces.*;
 
 public class ChessMatch {
@@ -53,5 +56,28 @@ public class ChessMatch {
             }
         }
         return matrix;
+    }
+
+    private void validateSourcePosition(Position sourcePosition) {
+        if (!board.positionExists(sourcePosition)) {
+            throw new ChessException("Source position doesn't exist!");
+        }
+        if (!board.thereIsAPiece(sourcePosition)) {
+            throw new ChessException("There isn't a piece on source position!");
+        }
+    }
+
+    private Piece makeMove(Position source, Position target) {
+        Piece pieceOnTarget = board.removePiece(target);
+        board.placePiece(board.removePiece(source), target);
+        return pieceOnTarget;
+    }
+
+    public ChessPiece performChessMove(ChessPosition sourcePosition, ChessPosition targetPosition) {
+        Position source = sourcePosition.toPosition();
+        Position target = targetPosition.toPosition();
+        validateSourcePosition(source);
+        Piece pieceCaptured = makeMove(source, target);
+        return (ChessPiece)pieceCaptured;
     }
 }
