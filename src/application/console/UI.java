@@ -36,7 +36,7 @@ public class UI {
             return new ChessPosition(column, row);
         }
         catch (RuntimeException erro) {
-            throw new InputMismatchException("Erro reading ChessPosition. Valid values are from a1 to h8!");
+            throw new InputMismatchException("Erro reading ChessPosition! Valid values are from a1 to h8!");
         }
     }
     
@@ -60,5 +60,16 @@ public class UI {
             System.out.print(ANSI_YELLOW + piece + ANSI_RESET);
         }
         System.out.print(" ");
+    }
+
+    public static void clearScreen() {
+        System.out.print("\033[H\033[2J");
+        System.out.flush();
+    }
+
+    public static void printErro(Exception erro, Scanner scanner) {
+        System.out.println("\n" + erro.getMessage());
+        System.out.print("Press enter key to continue the game!");
+        scanner.nextLine();
     }
 }
