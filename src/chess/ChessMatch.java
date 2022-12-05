@@ -58,6 +58,12 @@ public class ChessMatch {
         return matrix;
     }
 
+    public boolean[][] possibleMoves(ChessPosition sourcePosition) {
+        Position source = sourcePosition.toPosition();
+        validateSourcePosition(source);
+        return board.piece(source).possibleMoves();
+    }
+
     private void validateSourcePosition(Position sourcePosition) {
         if (!board.thereIsAPiece(sourcePosition)) {
             throw new ChessException("There isn't a piece on source position!");
