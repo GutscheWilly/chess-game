@@ -69,7 +69,7 @@ public class UI {
 
     public static void printErro(Exception erro, Scanner scanner) {
         System.out.println("\n" + erro.getMessage());
-        System.out.print("Press enter key to continue the game!");
+        System.out.print("Press enter to continue the game!");
         scanner.nextLine();
     }
 }

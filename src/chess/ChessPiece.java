@@ -2,9 +2,10 @@ package chess;
 
 import boardgame.Board;
 import boardgame.Piece;
+import boardgame.Position;
 import chess.enums.Color;
 
-public class ChessPiece extends Piece {
+public abstract class ChessPiece extends Piece {
     
     private Color color;
     private int moveCount;
@@ -21,5 +22,10 @@ public class ChessPiece extends Piece {
 
     public int getMoveCount() {
         return moveCount;
+    }
+
+    protected boolean isThereOpponentPiece(Position position) {
+        ChessPiece opponentPiece = (ChessPiece)getBoard().piece(position);
+        return opponentPiece != null && opponentPiece.getColor() != color;
     }
 }
