@@ -1,7 +1,6 @@
 package chess;
 
 import boardgame.Board;
-import boardgame.Piece;
 import boardgame.Position;
 import chess.enums.Color;
 import chess.exceptions.ChessException;
@@ -110,9 +109,11 @@ public class ChessMatch {
         }
     }
 
-    private Piece makeMove(Position source, Position target) {
-        Piece pieceOnTarget = board.removePiece(target);
-        board.placePiece(board.removePiece(source), target);
+    private ChessPiece makeMove(Position source, Position target) {
+        ChessPiece sourcePiece = (ChessPiece)board.removePiece(source);
+        ChessPiece pieceOnTarget = (ChessPiece)board.removePiece(target);
+        board.placePiece(sourcePiece, target);
+        sourcePiece.increaseMoveCount();
         return pieceOnTarget;
     }
 
@@ -121,9 +122,9 @@ public class ChessMatch {
         validateSourcePosition(source);
         Position target = targetPosition.toPosition();
         validateTargetPosition(target, (ChessPiece)board.piece(source));
-        Piece pieceCaptured = makeMove(source, target);
+        ChessPiece pieceCaptured = makeMove(source, target);
         increaseTurn();
         changeCurrentPlayer();
-        return (ChessPiece)pieceCaptured;
+        return pieceCaptured;
     }
 }
