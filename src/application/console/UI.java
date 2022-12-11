@@ -1,7 +1,9 @@
 package application.console;
 
 import java.util.InputMismatchException;
+import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 import chess.ChessMatch;
 import chess.ChessPiece;
@@ -41,9 +43,15 @@ public class UI {
         }
     }
 
-    public static void printMatch(ChessMatch chessMatch) {
-        printBoard(chessMatch.getPieces());
-        System.out.printf("\nTurn: %d\nCurrent player: %s\n", chessMatch.getTurn(), chessMatch.getCurrentPlayer());
+    public static void printPiece(ChessPiece piece) {
+        if (piece == null) {
+            System.out.print(ANSI_GREEN + "-" + ANSI_RESET);
+        } else if (piece.getColor() == Color.WHITE) {
+            System.out.print(ANSI_WHITE + piece + ANSI_RESET);
+        } else {
+            System.out.print(ANSI_YELLOW + piece + ANSI_RESET);
+        }
+        System.out.print(" ");
     }
     
     public static void printBoard(ChessPiece[][] pieces) {
@@ -71,15 +79,27 @@ public class UI {
         System.out.println(ANSI_PURPLE + "\t  a b c d e f g h" + ANSI_RESET);
     }
 
-    public static void printPiece(ChessPiece piece) {
-        if (piece == null) {
-            System.out.print(ANSI_GREEN + "-" + ANSI_RESET);
-        } else if (piece.getColor() == Color.WHITE) {
-            System.out.print(ANSI_WHITE + piece + ANSI_RESET);
-        } else {
-            System.out.print(ANSI_YELLOW + piece + ANSI_RESET);
+    public static void printCapturedPieces(List<ChessPiece> capturedPieces) {
+        List<ChessPiece> whitePieces = capturedPieces.stream().filter(x -> x.getColor() == Color.WHITE).collect(Collectors.toList());
+        List<ChessPiece> blackPieces = capturedPieces.stream().filter(x -> x.getColor() == Color.BLACK).collect(Collectors.toList());
+
+        System.out.println("Captured pieces:\n");
+        System.out.print("# WHITE -> [ ");
+        for (ChessPiece pieceCaptured : whitePieces) {
+            printPiece(pieceCaptured);
         }
-        System.out.print(" ");
+        System.out.println("]");
+        System.out.print("# BLACK -> [ ");
+        for (ChessPiece pieceCaptured : blackPieces) {
+            printPiece(pieceCaptured);
+        }
+        System.out.println("]");
+    }
+
+    public static void printMatch(ChessMatch chessMatch) {
+        printBoard(chessMatch.getPieces());
+        System.out.printf("\nTurn: %d\nCurrent player: %s\n\n", chessMatch.getTurn(), chessMatch.getCurrentPlayer());
+        printCapturedPieces(chessMatch.getCapturedPieces());
     }
 
     public static void clearScreen() {

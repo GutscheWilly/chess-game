@@ -1,5 +1,8 @@
 package chess;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import boardgame.Board;
 import boardgame.Position;
 import chess.enums.Color;
@@ -10,13 +13,17 @@ public class ChessMatch {
     
     private int turn;
     private Color currentPlayer;
+    private List<ChessPiece> piecesOnTheBoard;
+    private List<ChessPiece> capturedPieces;
     private Board board;
 
     public ChessMatch() {
         turn = 1;
         currentPlayer = Color.WHITE;
+        piecesOnTheBoard = new ArrayList<>();
+        capturedPieces = new ArrayList<>();
         board = new Board(8, 8);
-        initialSetup();
+        initialBoardSetup();
     }
 
     public int getTurn() {
@@ -39,11 +46,29 @@ public class ChessMatch {
         }
     }
 
-    private void placeNewPiece(char column, int row, ChessPiece piece) {
-        board.placePiece(piece, new ChessPosition(column, row).toPosition());
+    public List<ChessPiece> getPiecesOnTheBoard() {
+        return piecesOnTheBoard;
     }
 
-    public void initialSetup() {
+    public List<ChessPiece> getCapturedPieces() {
+        return capturedPieces;
+    }
+
+    public void capturePiece(ChessPiece piece) {
+        if (piece != null) {
+            piecesOnTheBoard.remove(piece);
+            capturedPieces.add(piece);
+        }
+    }
+
+    private void placeNewPiece(char column, int row, ChessPiece piece) {
+        if (piece != null) {
+            board.placePiece(piece, new ChessPosition(column, row).toPosition());
+            piecesOnTheBoard.add(piece);
+        }
+    }
+
+    public void initialBoardSetup() {
         // Black pieces:
         placeNewPiece('a', 8, new Rook(board, Color.BLACK));
         placeNewPiece('b', 8, new Horse(board, Color.BLACK));
@@ -56,7 +81,6 @@ public class ChessMatch {
         for (char i = 'a' ; i <= 'h' ; i++) {
             placeNewPiece(i, 7, new Pawn(board, Color.BLACK));
         }
-
         // White pieces:
         for (char i = 'a' ; i <= 'h' ; i++) {
             placeNewPiece(i, 2, new Pawn(board, Color.WHITE));
@@ -117,14 +141,13 @@ public class ChessMatch {
         return pieceOnTarget;
     }
 
-    public ChessPiece performChessMove(ChessPosition sourcePosition, ChessPosition targetPosition) {
+    public void performChessMove(ChessPosition sourcePosition, ChessPosition targetPosition) {
         Position source = sourcePosition.toPosition();
-        validateSourcePosition(source);
         Position target = targetPosition.toPosition();
+        validateSourcePosition(source);
         validateTargetPosition(target, (ChessPiece)board.piece(source));
-        ChessPiece pieceCaptured = makeMove(source, target);
+        capturePiece(makeMove(source, target));
         increaseTurn();
         changeCurrentPlayer();
-        return pieceCaptured;
     }
 }
