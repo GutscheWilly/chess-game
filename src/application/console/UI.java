@@ -98,8 +98,11 @@ public class UI {
 
     public static void printMatch(ChessMatch chessMatch) {
         printBoard(chessMatch.getPieces());
-        System.out.printf("\nTurn: %d\nCurrent player: %s\n\n", chessMatch.getTurn(), chessMatch.getCurrentPlayer());
         printCapturedPieces(chessMatch.getCapturedPieces());
+        System.out.printf("\nTurn: %d\nCurrent player: %s\n\n", chessMatch.getTurn(), chessMatch.getCurrentPlayer());
+        if (chessMatch.getCheck()) {
+            System.out.println("CHECK!");
+        }
     }
 
     public static void clearScreen() {
