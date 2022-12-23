@@ -50,6 +50,7 @@ public class Pawn extends ChessPiece {
         if (canMoveForward(gap, possibleMoves) && getMoveCount() == 0) {
             canMoveForward(2 * gap, possibleMoves);
         }
+        
         canCapturePiece(gap, -gap, possibleMoves);
         canCapturePiece(gap, gap, possibleMoves);
 

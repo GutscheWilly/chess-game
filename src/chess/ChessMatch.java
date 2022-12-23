@@ -24,6 +24,7 @@ public class ChessMatch {
         turn = 1;
         currentPlayer = Color.WHITE;
         check = false;
+        checkMate = false;
         piecesOnTheBoard = new ArrayList<>();
         capturedPieces = new ArrayList<>();
         board = new Board(8, 8);
@@ -43,11 +44,7 @@ public class ChessMatch {
     }
 
     private void changeCurrentPlayer() {
-        if (turn % 2 == 0) {
-            currentPlayer = Color.BLACK;
-        } else {
-            currentPlayer = Color.WHITE;
-        }
+        currentPlayer = opponentColor(currentPlayer);
     }
 
     public boolean getCheck() {
@@ -74,7 +71,7 @@ public class ChessMatch {
     }
 
     private ChessPiece getKing(Color color) {
-        List<ChessPiece> pieces = piecesOnTheBoard.stream().filter(x -> x.getColor() == color).collect(Collectors.toList());
+        List<ChessPiece> pieces = piecesOnTheBoard.stream().filter(piece -> piece.getColor() == color).collect(Collectors.toList());
         for (ChessPiece piece : pieces) {
             if (piece instanceof King) {
                 return piece;
@@ -85,7 +82,7 @@ public class ChessMatch {
 
     private boolean testCheck(Color color) {
         Position kingPosition = getKing(color).getChessPosition().toPosition();
-        List<ChessPiece> opponentPieces = piecesOnTheBoard.stream().filter(x -> x.getColor() == opponentColor(color)).collect(Collectors.toList());
+        List<ChessPiece> opponentPieces = piecesOnTheBoard.stream().filter(piece -> piece.getColor() == opponentColor(color)).collect(Collectors.toList());
         for (ChessPiece opponentPiece : opponentPieces) {
             if (opponentPiece.possibleMove(kingPosition)) {
                 return true;
