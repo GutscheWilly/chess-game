@@ -16,8 +16,8 @@ public class Bishop extends ChessPiece {
         return "B";
     }
 
-    private void apllyDiagonalMoves(int gapRow, int gapColum, boolean[][] possibleMoves) {
-        Position testMovePosition = new Position(position.getRow() + gapRow, position.getColumn() + gapColum);
+    private void apllyDiagonalMoves(int gapRow, int gapColumn, boolean[][] possibleMoves) {
+        Position testMovePosition = new Position(position.getRow() + gapRow, position.getColumn() + gapColumn);
 
         while (getBoard().positionExists(testMovePosition)) {
             if (!getBoard().thereIsAPiece(testMovePosition) || isThereOpponentPiece(testMovePosition)) {
@@ -26,7 +26,7 @@ public class Bishop extends ChessPiece {
             if (getBoard().thereIsAPiece(testMovePosition)) {
                 break;
             }
-            testMovePosition.setValues(testMovePosition.getRow() + gapRow, testMovePosition.getColumn() + gapColum);
+            testMovePosition.setValues(testMovePosition.getRow() + gapRow, testMovePosition.getColumn() + gapColumn);
         } 
     }
 
