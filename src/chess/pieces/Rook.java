@@ -16,50 +16,46 @@ public class Rook extends ChessPiece {
         return "R";
     }
 
+    private boolean validateMoveForRook(Position position) {
+        return getBoard().positionExists(position) && (!getBoard().thereIsAPiece(position) || isThereOpponentPiece(position));
+    }
+
+    private void applyHorizontalMoves(int gapColumn, boolean[][] possibleMoves) {
+        Position testPosition = new Position(position.getRow(), position.getColumn() + gapColumn);
+
+        while (validateMoveForRook(testPosition)) {
+            possibleMoves[testPosition.getRow()][testPosition.getColumn()] = true;
+
+            if (getBoard().thereIsAPiece(testPosition)) {
+                break;
+            }
+
+            testPosition.setValues(testPosition.getRow(), testPosition.getColumn() + gapColumn);
+        }
+    }
+
+    private void applyVerticalMoves(int gapRow, boolean[][] possibleMoves) {
+        Position testPosition = new Position(position.getRow() + gapRow, position.getColumn());
+
+        while (validateMoveForRook(testPosition)) {
+            possibleMoves[testPosition.getRow()][testPosition.getColumn()] = true;
+
+            if (getBoard().thereIsAPiece(testPosition)) {
+                break;
+            }
+
+            testPosition.setValues(testPosition.getRow() + gapRow, testPosition.getColumn());
+        }
+    }
+
     @Override
     public boolean[][] possibleMoves() {
         boolean[][] possibleMoves = new boolean[getBoard().getRows()][getBoard().getColumns()];
-        Position testPosition = new Position(0, 0);
-
-        // Above:
-        testPosition.setValues(position.getRow() - 1, position.getColumn());
-        while (getBoard().positionExists(testPosition) && !getBoard().thereIsAPiece(testPosition)) {
-            possibleMoves[testPosition.getRow()][testPosition.getColumn()] = true;
-            testPosition.setValues(testPosition.getRow() - 1, testPosition.getColumn());
-        }
-        if (getBoard().positionExists(testPosition) && isThereOpponentPiece(testPosition)) {
-            possibleMoves[testPosition.getRow()][testPosition.getColumn()] = true;
-        }
-
-        // Below:
-        testPosition.setValues(position.getRow() + 1, position.getColumn());
-        while (getBoard().positionExists(testPosition) && !getBoard().thereIsAPiece(testPosition)) {
-            possibleMoves[testPosition.getRow()][testPosition.getColumn()] = true;
-            testPosition.setValues(testPosition.getRow() + 1, testPosition.getColumn());
-        }
-        if (getBoard().positionExists(testPosition) && isThereOpponentPiece(testPosition)) {
-            possibleMoves[testPosition.getRow()][testPosition.getColumn()] = true;
-        }
-
-        // Left:
-        testPosition.setValues(position.getRow(), position.getColumn() - 1);
-        while (getBoard().positionExists(testPosition) && !getBoard().thereIsAPiece(testPosition)) {
-            possibleMoves[testPosition.getRow()][testPosition.getColumn()] = true;
-            testPosition.setValues(testPosition.getRow(), testPosition.getColumn() - 1);
-        }
-        if (getBoard().positionExists(testPosition) && isThereOpponentPiece(testPosition)) {
-            possibleMoves[testPosition.getRow()][testPosition.getColumn()] = true;
-        }
-
-        // Right:
-        testPosition.setValues(position.getRow(), position.getColumn() + 1);
-        while (getBoard().positionExists(testPosition) && !getBoard().thereIsAPiece(testPosition)) {
-            possibleMoves[testPosition.getRow()][testPosition.getColumn()] = true;
-            testPosition.setValues(testPosition.getRow(), testPosition.getColumn() + 1);
-        }
-        if (getBoard().positionExists(testPosition) && isThereOpponentPiece(testPosition)) {
-            possibleMoves[testPosition.getRow()][testPosition.getColumn()] = true;
-        }
+        
+        applyHorizontalMoves(1, possibleMoves);
+        applyHorizontalMoves(-1, possibleMoves);
+        applyVerticalMoves(1, possibleMoves);
+        applyVerticalMoves(-1, possibleMoves);
 
         return possibleMoves;
     }

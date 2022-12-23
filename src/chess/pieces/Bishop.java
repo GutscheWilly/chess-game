@@ -16,7 +16,7 @@ public class Bishop extends ChessPiece {
         return "B";
     }
 
-    private void apllyDiagonalMoves(int gapRow, int gapColumn, boolean[][] possibleMoves) {
+    private void applyDiagonalMoves(int gapRow, int gapColumn, boolean[][] possibleMoves) {
         Position testMovePosition = new Position(position.getRow() + gapRow, position.getColumn() + gapColumn);
 
         while (getBoard().positionExists(testMovePosition)) {
@@ -34,10 +34,10 @@ public class Bishop extends ChessPiece {
     public boolean[][] possibleMoves() {
         boolean[][] possibleMoves = new boolean[getBoard().getRows()][getBoard().getColumns()];
 
-        apllyDiagonalMoves(-1, -1, possibleMoves);
-        apllyDiagonalMoves(-1, 1, possibleMoves);
-        apllyDiagonalMoves(1, -1, possibleMoves);
-        apllyDiagonalMoves(1, 1, possibleMoves);
+        applyDiagonalMoves(-1, -1, possibleMoves);
+        applyDiagonalMoves(-1, 1, possibleMoves);
+        applyDiagonalMoves(1, -1, possibleMoves);
+        applyDiagonalMoves(1, 1, possibleMoves);
 
         return possibleMoves;
     }

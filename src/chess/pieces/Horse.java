@@ -20,7 +20,7 @@ public class Horse extends ChessPiece {
         return getBoard().positionExists(position) && (!getBoard().thereIsAPiece(position) || isThereOpponentPiece(position));
     }
 
-    private void apllyMovesInL(int gapRow, int gapColumn, boolean[][] possibleMoves) {
+    private void applyMovesInL(int gapRow, int gapColumn, boolean[][] possibleMoves) {
         Position testPosition = new Position(position.getRow() + gapRow, position.getColumn() + 2 * gapColumn);
         
         if (validateMoveForHorse(testPosition)) {
@@ -38,10 +38,10 @@ public class Horse extends ChessPiece {
     public boolean[][] possibleMoves() {
         boolean[][] possibleMoves = new boolean[getBoard().getRows()][getBoard().getColumns()];
 
-        apllyMovesInL(1, 1, possibleMoves);
-        apllyMovesInL(1, -1, possibleMoves);
-        apllyMovesInL(-1, 1, possibleMoves);
-        apllyMovesInL(-1, -1, possibleMoves);
+        applyMovesInL(1, 1, possibleMoves);
+        applyMovesInL(1, -1, possibleMoves);
+        applyMovesInL(-1, 1, possibleMoves);
+        applyMovesInL(-1, -1, possibleMoves);
 
         return possibleMoves;
     }
