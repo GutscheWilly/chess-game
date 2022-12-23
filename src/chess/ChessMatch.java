@@ -15,6 +15,7 @@ public class ChessMatch {
     private int turn;
     private Color currentPlayer;
     private boolean check;
+    private boolean checkMate;
     private List<ChessPiece> piecesOnTheBoard;
     private List<ChessPiece> capturedPieces;
     private Board board;
@@ -53,6 +54,10 @@ public class ChessMatch {
         return check;
     }
 
+    public boolean getCheckMate() {
+        return checkMate;
+    }
+
     public List<ChessPiece> getPiecesOnTheBoard() {
         return piecesOnTheBoard;
     }
@@ -64,9 +69,8 @@ public class ChessMatch {
     private Color opponentColor(Color color) {
         if (color == Color.WHITE) {
             return Color.BLACK;
-        } else {
-            return Color.WHITE;
         }
+        return Color.WHITE;
     }
 
     private ChessPiece getKing(Color color) {
@@ -90,6 +94,32 @@ public class ChessMatch {
         return false;
     }
 
+    private boolean testCheckMate(Color color) {
+        if (testCheck(color)) {
+            List<ChessPiece> allyPieces = piecesOnTheBoard.stream().filter(piece -> piece.getColor() == color).collect(Collectors.toList());
+
+            for (ChessPiece allyPiece : allyPieces) {
+                boolean[][] possibleMoves = allyPiece.possibleMoves();
+                for (int i = 0 ; i < board.getRows() ; i++) {
+                    for (int j = 0 ; j < board.getColumns() ; j++) {
+                        if (possibleMoves[i][j]) {
+                            Position source = allyPiece.getChessPosition().toPosition();
+                            Position target = new Position(i, j);
+                            ChessPiece capturedPiece = makeMove(source, target);
+                            boolean testCheck = testCheck(color);
+                            undoMove(source, target, capturedPiece);
+                            if (!testCheck) {
+                                return false;
+                            }
+                        }
+                    }
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
     private void placeNewPiece(char column, int row, ChessPiece piece) {
         if (piece != null) {
             board.placePiece(piece, new ChessPosition(column, row).toPosition());
@@ -98,7 +128,7 @@ public class ChessMatch {
     }
 
     public void initialBoardSetup() {
-        // Black pieces:
+        //Black pieces:
         placeNewPiece('a', 8, new Rook(board, Color.BLACK));
         placeNewPiece('b', 8, new Horse(board, Color.BLACK));
         placeNewPiece('c', 8, new Bishop(board, Color.BLACK));
@@ -110,7 +140,7 @@ public class ChessMatch {
         for (char i = 'a' ; i <= 'h' ; i++) {
             placeNewPiece(i, 7, new Pawn(board, Color.BLACK));
         }
-        // White pieces:
+        //White pieces:
         for (char i = 'a' ; i <= 'h' ; i++) {
             placeNewPiece(i, 2, new Pawn(board, Color.WHITE));
         }
@@ -167,6 +197,7 @@ public class ChessMatch {
         ChessPiece pieceOnTarget = (ChessPiece)board.removePiece(target);
         board.placePiece(sourcePiece, target);
         sourcePiece.increaseMoveCount();
+        capturePiece(pieceOnTarget);
         return pieceOnTarget;
     }
 
@@ -176,14 +207,19 @@ public class ChessMatch {
         validateSourcePosition(source);
         validateTargetPosition(target, (ChessPiece)board.piece(source));
         ChessPiece capturedPiece = makeMove(source, target);
-        capturePiece(capturedPiece);
+
         if (testCheck(currentPlayer)) {
             undoMove(source, target, capturedPiece);
             throw new ChessException(("You can't put yourself in check!"));
         }
-        increaseTurn();
-        changeCurrentPlayer();
-        check = testCheck(currentPlayer);
+
+        check = testCheck(opponentColor(currentPlayer));
+        checkMate = testCheckMate(opponentColor(currentPlayer));
+
+        if (!checkMate) {
+            increaseTurn();
+            changeCurrentPlayer();
+        }
     }
 
     private void capturePiece(ChessPiece piece) {
@@ -200,12 +236,13 @@ public class ChessMatch {
         }
     }
 
-    private void undoMove(Position source, Position target, ChessPiece piece) {
+    private void undoMove(Position source, Position target, ChessPiece capturedPiece) {
         ChessPiece targetPiece = (ChessPiece)board.removePiece(target);
         board.placePiece(targetPiece, source);
-        if (piece != null) {
-            board.placePiece(piece, target);
+        targetPiece.decreaseMoveCount();
+        if (capturedPiece != null) {
+            board.placePiece(capturedPiece, target);
         }
-        replacePieceOnTheBoard(piece);
+        replacePieceOnTheBoard(capturedPiece);
     }
 }

@@ -62,7 +62,7 @@ public class UI {
             }
             System.out.println();
         }
-        System.out.println(ANSI_PURPLE + "\t  a b c d e f g h" + ANSI_RESET); 
+        System.out.println(ANSI_PURPLE + "\t  a b c d e f g h\n" + ANSI_RESET); 
     }
 
     public static void printBoard(ChessPiece[][] pieces, boolean[][] possibleMoves) {
@@ -76,7 +76,7 @@ public class UI {
             }
             System.out.println();
         }
-        System.out.println(ANSI_PURPLE + "\t  a b c d e f g h" + ANSI_RESET);
+        System.out.println(ANSI_PURPLE + "\t  a b c d e f g h\n" + ANSI_RESET);
     }
 
     public static void printCapturedPieces(List<ChessPiece> capturedPieces) {
@@ -101,7 +101,7 @@ public class UI {
         printCapturedPieces(chessMatch.getCapturedPieces());
         System.out.printf("\nTurn: %d\nCurrent player: %s\n\n", chessMatch.getTurn(), chessMatch.getCurrentPlayer());
         if (chessMatch.getCheck()) {
-            System.out.println("CHECK!");
+            System.out.println("CHECK!\n");
         }
     }
 
@@ -114,5 +114,11 @@ public class UI {
         System.out.println("\n" + erro.getMessage());
         System.out.print("Press enter to continue the game!");
         scanner.nextLine();
+    }
+
+    public static void printEndGameMessage(ChessMatch chessMatch) {
+        clearScreen();
+        printBoard(chessMatch.getPieces());
+        System.out.println("<<<< CHECKMATE! " + chessMatch.getCurrentPlayer() + " player won! >>>>\n");
     }
 }

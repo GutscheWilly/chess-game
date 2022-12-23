@@ -12,16 +12,16 @@ public class Program {
         Scanner scanner = new Scanner(System.in);
         ChessMatch chessMatch = new ChessMatch();
 
-        while (true) {
+        while (!chessMatch.getCheckMate()) {
             try {
                 UI.clearScreen();
                 UI.printMatch(chessMatch);
-                System.out.print("\nSource: ");
+                System.out.print("Source: ");
                 ChessPosition sourcePosition = UI.readChessPosition(scanner);
                 boolean[][] possibleMoves = chessMatch.possibleMoves(sourcePosition);
                 UI.clearScreen();
                 UI.printBoard(chessMatch.getPieces(), possibleMoves);
-                System.out.print("\nTarget: ");
+                System.out.print("Target: ");
                 ChessPosition targetPosition = UI.readChessPosition(scanner);
                 chessMatch.performChessMove(sourcePosition, targetPosition);
             } 
@@ -29,6 +29,7 @@ public class Program {
                 UI.printErro(erro, scanner);
             } 
         }
+
+        UI.printEndGameMessage(chessMatch);
     }
 }
- 
