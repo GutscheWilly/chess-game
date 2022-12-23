@@ -16,16 +16,20 @@ public class Bishop extends ChessPiece {
         return "B";
     }
 
+    private boolean validateMoveForBishop(Position position) {
+        return getBoard().positionExists(position) && (!getBoard().thereIsAPiece(position) || isThereOpponentPiece(position));
+    }
+
     private void applyDiagonalMoves(int gapRow, int gapColumn, boolean[][] possibleMoves) {
         Position testMovePosition = new Position(position.getRow() + gapRow, position.getColumn() + gapColumn);
 
-        while (getBoard().positionExists(testMovePosition)) {
-            if (!getBoard().thereIsAPiece(testMovePosition) || isThereOpponentPiece(testMovePosition)) {
-                possibleMoves[testMovePosition.getRow()][testMovePosition.getColumn()] = true;
-            }
+        while (validateMoveForBishop(testMovePosition)) {
+            possibleMoves[testMovePosition.getRow()][testMovePosition.getColumn()] = true;
+
             if (getBoard().thereIsAPiece(testMovePosition)) {
                 break;
             }
+            
             testMovePosition.setValues(testMovePosition.getRow() + gapRow, testMovePosition.getColumn() + gapColumn);
         } 
     }
