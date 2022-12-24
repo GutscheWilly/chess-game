@@ -16,6 +16,13 @@ public class Pawn extends ChessPiece {
         return "P";
     }
 
+    private int gapValueFromColor() {
+        if (getColor() == Color.WHITE) {
+            return -1;
+        }
+        return 1;
+    }
+
     private boolean canMoveForward(int gapRow, boolean[][] possibleMoves) {
         Position testPosition = new Position(position.getRow() + gapRow, position.getColumn());
         
@@ -39,13 +46,7 @@ public class Pawn extends ChessPiece {
     @Override
     public boolean[][] possibleMoves() {
         boolean[][] possibleMoves = new boolean[getBoard().getRows()][getBoard().getColumns()];
-        int gap;
-
-        if (getColor() == Color.WHITE) {
-            gap = -1;
-        } else {
-            gap = 1;
-        }
+        int gap = gapValueFromColor();
 
         if (canMoveForward(gap, possibleMoves) && getMoveCount() == 0) {
             canMoveForward(2 * gap, possibleMoves);
