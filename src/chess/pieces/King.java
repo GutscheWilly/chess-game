@@ -16,43 +16,48 @@ public class King extends ChessPiece {
         return "K";
     }
 
-    private boolean canMove(Position position) {
-        ChessPiece piece = (ChessPiece)getBoard().piece(position);
-        return piece == null || piece.getColor() != getColor();
+    private boolean validateMoveForKing(Position position) {
+        return getBoard().positionExists(position) && (!getBoard().thereIsAPiece(position) || isThereOpponentPiece(position));
+    }
+
+    private void applyDiagonalMoves(int gapRow, int gapColumn, boolean[][] possibleMoves) {
+        Position testPosition = new Position(position.getRow() + gapRow, position.getColumn() + gapColumn);
+        
+        if (validateMoveForKing(testPosition)) {
+            possibleMoves[testPosition.getRow()][testPosition.getColumn()] = true;
+        }
+    }
+
+    private void applyHorizontalMoves(int gapColumn, boolean[][] possibleMoves) {
+        Position testPosition = new Position(position.getRow(), position.getColumn() + gapColumn);
+
+        if (validateMoveForKing(testPosition)) {
+            possibleMoves[testPosition.getRow()][testPosition.getColumn()] = true;
+        }
+    }
+
+    private void applyVerticalMoves(int gapRow, boolean[][] possibleMoves) {
+        Position testPosition = new Position(position.getRow() + gapRow, position.getColumn());
+
+        if (validateMoveForKing(testPosition)) {
+            possibleMoves[testPosition.getRow()][testPosition.getColumn()] = true;
+        }
     }
 
     @Override
     public boolean[][] possibleMoves() {
         boolean[][] possibleMoves = new boolean[getBoard().getRows()][getBoard().getColumns()];
-        Position testPosition = new Position(0, 0);
+        
+        applyDiagonalMoves(1, 1, possibleMoves);
+        applyDiagonalMoves(1, -1, possibleMoves);
+        applyDiagonalMoves(-1, 1, possibleMoves);
+        applyDiagonalMoves(-1, -1, possibleMoves);
 
-        // Above:
-        for (int i = -1 ; i < 2 ; i++) {
-            testPosition.setValues(position.getRow() - 1, position.getColumn() + i);
-            if (getBoard().positionExists(testPosition) && canMove(testPosition)) {
-                possibleMoves[position.getRow() - 1][position.getColumn() + i] = true;
-            }
-        }
+        applyHorizontalMoves(1, possibleMoves);
+        applyHorizontalMoves(-1, possibleMoves);
 
-        // Below:
-        for (int i = -1 ; i < 2 ; i++) {
-            testPosition.setValues(position.getRow() + 1, position.getColumn() + i);
-            if (getBoard().positionExists(testPosition) && canMove(testPosition)) {
-                possibleMoves[position.getRow() + 1][position.getColumn() + i] = true;
-            }
-        }
-
-        // Left:
-        testPosition.setValues(position.getRow(), position.getColumn() - 1);
-        if (getBoard().positionExists(testPosition) && canMove(testPosition)) {
-            possibleMoves[position.getRow()][position.getColumn() - 1] = true;
-        }
-
-        // Right:
-        testPosition.setValues(position.getRow(), position.getColumn() + 1);
-        if (getBoard().positionExists(testPosition) && canMove(testPosition)) {
-            possibleMoves[position.getRow()][position.getColumn() + 1] = true;
-        }
+        applyVerticalMoves(1, possibleMoves);
+        applyVerticalMoves(-1, possibleMoves);
 
         return possibleMoves;
     }
