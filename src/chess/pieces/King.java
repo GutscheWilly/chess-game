@@ -2,13 +2,17 @@ package chess.pieces;
 
 import boardgame.Board;
 import boardgame.Position;
+import chess.ChessMatch;
 import chess.ChessPiece;
 import chess.enums.Color;
 
 public class King extends ChessPiece {
 
-    public King(Board board, Color color) {
+    ChessMatch chessMatch;
+
+    public King(Board board, Color color, ChessMatch chessMatch) {
         super(board, color);
+        this.chessMatch = chessMatch;
     }
 
     @Override
@@ -59,6 +63,49 @@ public class King extends ChessPiece {
         applyVerticalMoves(1, possibleMoves);
         applyVerticalMoves(-1, possibleMoves);
 
+        if (validateMoveCountsForCastling(this) && !chessMatch.getCheck()) {
+            if (testKingSideCastling()) {
+                applyHorizontalMoves(2, possibleMoves);
+            }
+            if (testQueenSideCastling()) {
+                applyHorizontalMoves(-2, possibleMoves);
+            }
+        }
+
         return possibleMoves;
+    }
+
+    private boolean validateMoveCountsForCastling(ChessPiece chessPiece) {
+        return chessPiece != null && chessPiece.getMoveCount() == 0;
+    }
+
+    private boolean testKingSideCastling() {
+        Position testPosition = new Position(this.position.getRow(), this.position.getColumn() + 1);
+        
+        for (int i = 0 ; i < 2 ; i++) {
+            if (getBoard().thereIsAPiece(testPosition)) {
+                return false;
+            }
+            testPosition.setValues(testPosition.getRow(), testPosition.getColumn() + 1);
+        }
+
+        ChessPiece pieceAtSourcePositionOfRook = (ChessPiece)getBoard().piece(testPosition);
+
+        return validateMoveCountsForCastling(pieceAtSourcePositionOfRook) && pieceAtSourcePositionOfRook instanceof Rook;
+    }
+
+    private boolean testQueenSideCastling() {
+        Position testPosition = new Position(this.position.getRow(), this.position.getColumn() - 1);
+
+        for (int i = 0 ; i < 3 ; i++) {
+            if (getBoard().thereIsAPiece(testPosition)) {
+                return false;
+            }
+            testPosition.setValues(testPosition.getRow(), testPosition.getColumn() - 1);
+        }
+
+        ChessPiece pieceAtSourcePositionOfRook = (ChessPiece)getBoard().piece(testPosition);
+
+        return validateMoveCountsForCastling(pieceAtSourcePositionOfRook) && pieceAtSourcePositionOfRook instanceof Rook;
     }
 }
