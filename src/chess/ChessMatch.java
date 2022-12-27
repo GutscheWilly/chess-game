@@ -135,11 +135,11 @@ public class ChessMatch {
         placeNewPiece('g', 8, new Horse(board, Color.BLACK));
         placeNewPiece('h', 8, new Rook(board, Color.BLACK));
         for (char i = 'a' ; i <= 'h' ; i++) {
-            placeNewPiece(i, 7, new Pawn(board, Color.BLACK));
+            placeNewPiece(i, 7, new Pawn(board, Color.BLACK, this));
         }
         //White pieces:
         for (char i = 'a' ; i <= 'h' ; i++) {
-            placeNewPiece(i, 2, new Pawn(board, Color.WHITE));
+            placeNewPiece(i, 2, new Pawn(board, Color.WHITE, this));
         }
         placeNewPiece('a', 1, new Rook(board, Color.WHITE));
         placeNewPiece('b', 1, new Horse(board, Color.WHITE));
@@ -193,7 +193,7 @@ public class ChessMatch {
         ChessPiece sourcePiece = (ChessPiece)board.removePiece(source);
         ChessPiece pieceOnTarget = (ChessPiece)board.removePiece(target);
         board.placePiece(sourcePiece, target);
-        sourcePiece.increaseMoveCount();
+        sourcePiece.increaseMoveCount(this.turn);
         capturePiece(pieceOnTarget);
         return pieceOnTarget;
     }
@@ -230,6 +230,12 @@ public class ChessMatch {
             }
 
             throw new ChessException(("You can't put yourself in check!"));
+        }
+
+        if (board.piece(target) instanceof Pawn) {
+            if (validateEnPassantMove(source, target, capturedPiece)) {
+                captureByEnPassant((Pawn)board.piece(target), target);
+            }
         }
 
         check = testCheck(opponentColor(currentPlayer));
@@ -275,5 +281,15 @@ public class ChessMatch {
         if (gapColumn == -2) {
             undoMove(new Position(source.getRow(), source.getColumn() - 4), new Position(source.getRow(), source.getColumn() - 1), null);
         }
+    }
+
+    private boolean validateEnPassantMove(Position source, Position target, ChessPiece capturedPiece) {
+        return target.getColumn() - source.getColumn() != 0 && capturedPiece == null;
+    }
+
+    private void captureByEnPassant(Pawn pawn, Position target) {
+        int gapRow = pawn.gapValueFromColor();
+        ChessPiece pawnCaptured = (ChessPiece)board.removePiece(new Position(target.getRow() - gapRow, target.getColumn()));
+        capturePiece(pawnCaptured);
     }
 }

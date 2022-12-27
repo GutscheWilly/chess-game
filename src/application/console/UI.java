@@ -101,7 +101,7 @@ public class UI {
         printCapturedPieces(chessMatch.getCapturedPieces());
         System.out.printf("\nTurn: %d\nCurrent player: %s\n\n", chessMatch.getTurn(), chessMatch.getCurrentPlayer());
         if (chessMatch.getCheck()) {
-            System.out.println("CHECK!\n");
+            System.out.println("<<< CHECK! >>>\n");
         }
     }
 
@@ -119,6 +119,6 @@ public class UI {
     public static void printEndGameMessage(ChessMatch chessMatch) {
         clearScreen();
         printBoard(chessMatch.getPieces());
-        System.out.println("<<<< CHECKMATE! " + chessMatch.getCurrentPlayer() + " player won! >>>>\n");
+        System.out.println("<<< CHECKMATE! " + chessMatch.getCurrentPlayer() + " PLAYER WON! >>>\n");
     }
 }

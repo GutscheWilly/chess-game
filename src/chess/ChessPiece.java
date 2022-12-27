@@ -9,11 +9,13 @@ public abstract class ChessPiece extends Piece {
     
     private Color color;
     private int moveCount;
+    private int turnOfFirstMoviment;
 
     public ChessPiece(Board board, Color color) {
         super(board);
         this.color = color;
         moveCount = 0;
+        turnOfFirstMoviment = 0;
     }
 
     public ChessPosition getChessPosition() {
@@ -28,8 +30,16 @@ public abstract class ChessPiece extends Piece {
         return moveCount;
     }
 
-    public void increaseMoveCount() {
+    public int getTurnOfFirstMoviment() {
+        return turnOfFirstMoviment;
+    }
+
+    public void increaseMoveCount(int turnOfMoviment) {
         moveCount++;
+
+        if (moveCount == 1) {
+            turnOfFirstMoviment = turnOfMoviment;
+        }
     }
 
     public void decreaseMoveCount() {
