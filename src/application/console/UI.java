@@ -116,6 +116,20 @@ public class UI {
         scanner.nextLine();
     }
 
+    public static int printPromotionOptions(ChessPiece[][] pieces, Scanner scanner) {
+        try {
+            clearScreen();
+            printBoard(pieces);
+            System.out.println("\n<<< You must choose one of these options to promote your pawn >>>\n");
+            System.out.println("1 - Rook | 2 - Horse | 3 - Bishop | 4 - Queen\n");
+            System.out.print("Enter a number: ");
+            int option = scanner.nextInt();
+            return option;
+        } catch (RuntimeException erro) {
+            throw new InputMismatchException("Input erro!");
+        }
+    }
+
     public static void printEndGameMessage(ChessMatch chessMatch) {
         clearScreen();
         printBoard(chessMatch.getPieces());

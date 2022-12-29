@@ -2,8 +2,10 @@ package chess;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 import java.util.stream.Collectors;
 
+import application.console.UI;
 import boardgame.Board;
 import boardgame.Position;
 import chess.enums.Color;
@@ -233,8 +235,13 @@ public class ChessMatch {
         }
 
         if (board.piece(target) instanceof Pawn) {
+
             if (validateEnPassantMove(source, target, capturedPiece)) {
                 captureByEnPassant((Pawn)board.piece(target), target);
+            }
+
+            if (target.getRow() == rowOfPromotionForPawn((Pawn)board.piece(target))) {
+                logicOfPromotion(target);
             }
         }
 
@@ -291,5 +298,46 @@ public class ChessMatch {
         int gapRow = pawn.gapValueFromColor();
         ChessPiece pawnCaptured = (ChessPiece)board.removePiece(new Position(target.getRow() - gapRow, target.getColumn()));
         capturePiece(pawnCaptured);
+    }
+
+    private int rowOfPromotionForPawn(Pawn pawn) {
+        if (pawn.getColor() == Color.WHITE) {
+            return 0;
+        }
+        return 7;
+    }
+
+    private ChessPiece chessPieceOfPromotion(int option) {
+        switch (option) {
+            case 1:
+                return new Rook(board, currentPlayer);
+            case 2:
+                return new Horse(board, currentPlayer);
+            case 3:
+                return new Bishop(board, currentPlayer);
+            case 4:
+                return new Queen(board, currentPlayer);
+            default:
+                throw new ChessException("The option chosen is not valid!");
+        }
+    }
+
+    private void makeThePromotion(ChessPiece piece, Position position) {
+        piecesOnTheBoard.remove(board.piece(position));
+        board.removePiece(position);
+        board.placePiece(piece, position);
+        piecesOnTheBoard.add(piece);
+    }
+
+    private void logicOfPromotion(Position position) {
+        try {
+            int optionOfPromotion = UI.printPromotionOptions(getPieces(), new Scanner(System.in));
+            ChessPiece pieceOfPromotion = chessPieceOfPromotion(optionOfPromotion);
+            makeThePromotion(pieceOfPromotion, position);
+        }
+        catch (Exception erro) {
+            UI.printErro(erro, new Scanner(System.in));
+            logicOfPromotion(position);
+        }
     }
 }
